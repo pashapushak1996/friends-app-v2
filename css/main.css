@@ -15,6 +15,11 @@ body {
   height: 100%;
 }
 
+.d-flex, .radio-buttons__item, .radio-buttons, .slider-range, .button, .form__buttons, .form__item-header, .drawer__button, .drawer__form, .header .container, .header {
+  display: flex;
+  align-items: center;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -29,10 +34,8 @@ body {
 }
 
 .header {
-  height: 7.2rem;
-  display: flex;
   justify-content: center;
-  align-items: center;
+  height: 7.2rem;
   box-shadow: 3px 4px 15px rgba(0, 0, 0, 0.15);
 }
 .header__logo {
@@ -71,8 +74,6 @@ body {
   height: 1.9rem;
 }
 .header .container {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
   width: 100%;
 }
@@ -80,6 +81,7 @@ body {
 .main {
   position: relative;
   flex: 1 auto;
+  display: flex;
 }
 
 .drawer {
@@ -87,34 +89,34 @@ body {
   position: relative;
   z-index: 4;
   height: 100%;
+  width: 9rem;
 }
 .drawer__inner {
   position: absolute;
-  left: -20rem;
-  height: 100%;
-  display: flex;
-  transition: all 0.2s ease;
+  left: -30rem;
   z-index: 2;
+  display: flex;
+  height: 100%;
+  transition: all 0.2s ease;
 }
 .drawer__inner.active {
   left: 0;
 }
 .drawer__form {
-  width: 20rem;
-  box-shadow: 3px 4px 10px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  width: 30rem;
   height: 100%;
   background-color: #FFFFFF;
+  box-shadow: 3px 4px 10px rgba(0, 0, 0, 0.1);
 }
 .drawer__button {
-  position: relative;
-  display: flex;
   justify-content: center;
-  align-items: center;
   flex-direction: column;
+  position: relative;
   gap: 1rem;
-  margin-top: 10rem;
   width: 90px;
   height: 90px;
+  margin-top: 10rem;
   border-bottom-right-radius: 1rem;
   border-top-right-radius: 1rem;
   letter-spacing: 0.1rem;
@@ -149,20 +151,232 @@ body {
   transform: translateX(-0.2rem);
 }
 
+.form {
+  padding: 2rem 3rem;
+}
+.form__title {
+  font-size: 3.2rem;
+  margin-bottom: 1rem;
+}
+.form__subtitle {
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+.form__item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  margin: 1rem 0;
+}
+.form__item-header {
+  justify-content: space-between;
+}
+.form__textarea {
+  height: 6.5rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  background-color: #F2F2F4;
+  border-radius: 0.5rem;
+  outline: none;
+  border: none;
+  color: #727272;
+  font-size: 1.4rem;
+  font-weight: bold;
+  resize: none;
+}
+.form__textarea::placeholder {
+  color: #B7B6BB;
+}
+.form__buttons {
+  justify-content: center;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.button {
+  justify-content: center;
+  height: 4rem;
+  width: 11rem;
+  border-radius: 10rem;
+  cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #727272;
+  border: 1px solid #727272;
+}
+.button--green {
+  color: #FFFFFF;
+  background-color: #1AE4A6;
+  border: none;
+}
+
+.select {
+  position: relative;
+  width: 100%;
+  font-size: 1.4rem;
+  color: #8B8C94;
+  font-weight: bold;
+}
+.select::before {
+  content: url("../assets/icons/select-arrow.svg");
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1rem;
+  height: 1rem;
+}
+.select__item {
+  position: relative;
+  width: 100%;
+  height: 2.3rem;
+  border-bottom: 1px solid #D6D6D6;
+  cursor: pointer;
+}
+.select__item img {
+  width: 1.5rem;
+  height: 1.2rem;
+  transform: translateY(0.1rem);
+}
+.select__item:hover {
+  color: #009EFD;
+}
+.select__item_active {
+  margin-bottom: 0.5rem;
+}
+.select__radio {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  opacity: 0;
+}
+.select__content {
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.select__content--visible {
+  display: flex;
+}
+
 .back-blur {
   display: none;
-  opacity: 1;
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
   z-index: 1;
+  width: 100%;
   height: 100%;
+  opacity: 1;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(2.5px);
 }
 .back-blur.active {
   display: block;
+}
+
+/*Slider styles*/
+#slider-round {
+  height: 10px;
+}
+
+#slider-round .noUi-connect {
+  background: #009EFD;
+}
+
+#slider-round .noUi-handle {
+  height: 18px;
+  width: 18px;
+  top: -5px;
+  right: -9px;
+  border-radius: 9px;
+}
+
+.noUi-handle.noUi-handle-lower::after,
+.noUi-handle.noUi-handle-lower:before,
+.noUi-handle.noUi-handle-upper:before,
+.noUi-handle.noUi-handle-upper::after {
+  display: none;
+}
+
+.slider-range {
+  justify-content: space-between;
+  color: #727272;
+  margin-top: 0.5rem;
+}
+
+.slider-range span:nth-child(2) {
+  margin-left: 1.3rem;
+}
+
+.noUi-touch-area {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+}
+
+.noUi-touch-area::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url("../assets/icons/trumb-icon.svg");
+  background-size: cover;
+}
+
+/*Radio buttons group*/
+.radio-buttons {
+  justify-content: space-between;
+}
+.radio-buttons__item {
+  gap: 0.5rem;
+  font-size: 1.4rem;
+  color: #727272;
+}
+.radio-buttons__item--active, .radio-buttons__item:hover {
+  color: #009EFD;
+  font-weight: 700;
+  cursor: pointer;
+}
+.radio-buttons__radio-btn {
+  cursor: pointer;
+  width: 1.5rem;
+  height: 1.5rem;
+  appearance: none;
+}
+.radio-buttons__radio-btn:after {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 15px;
+  top: -2px;
+  left: -1px;
+  position: relative;
+  content: "";
+  display: inline-block;
+  visibility: visible;
+  border: 0.1rem solid #C4C4C4;
+}
+.radio-buttons__radio-btn:checked:after {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 15px;
+  top: -2px;
+  left: -1px;
+  position: relative;
+  background-image: url("../assets/icons/trumb-icon.svg");
+  background-size: cover;
+  content: "";
+  display: inline-block;
+  visibility: visible;
+  border: 0.1rem solid #009EFD;
 }
 
 /*# sourceMappingURL=main.css.map */
