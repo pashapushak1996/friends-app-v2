@@ -62,3 +62,53 @@ function selectOnClick({ target }) {
 }
 
 select.addEventListener('click', selectOnClick);
+
+const createFlagUrl = (country) => `https://flagcdn.com/${ country }.svg`;
+
+const user = {
+    "gender": "male",
+    "name": {
+        "title": "Mr",
+        "first": "Justin",
+        "last": "Rodriguez"
+    },
+    "location": {
+        "street": {
+            "number": 7332,
+            "name": "Rue de la Barre"
+        },
+        "city": "Rouen",
+        "state": "Deux-Sèvres",
+        "country": "France",
+    },
+    "email": "justin.rodriguez@example.com",
+    "login": {
+        "uuid": "6e5bac39-083f-422a-924b-672b92406d14",
+        "username": "goldenpeacock467",
+        "password": "bobo",
+        "salt": "cFm7hjQK",
+        "md5": "48827fae59f8c40c680598441ec00efe",
+        "sha1": "f26f9b9e0b71db25bca93553fa36eafd05f93066",
+        "sha256": "957c414367e42fd4bbb9ac4bc4dbbcc9121d27630154ea58bc2012ae6d450116"
+    },
+    "dob": {
+        "date": "1972-11-22T17:00:36.053Z",
+        "age": 49
+    },
+    "registered": {
+        "date": "2004-11-25T14:22:42.336Z",
+        "age": 17
+    },
+    "phone": "03-12-04-80-23",
+    "cell": "06-01-45-29-35",
+    "id": {
+        "name": "INSEE",
+        "value": "1721076478607 50"
+    },
+    "picture": {
+        "large": "https://randomuser.me/api/portraits/men/71.jpg",
+        "medium": "https://randomuser.me/api/portraits/med/men/71.jpg",
+        "thumbnail": "https://randomuser.me/api/portraits/thumb/men/71.jpg"
+    },
+    "nat": "FR"
+};
