@@ -4,8 +4,121 @@ const background = document.querySelector('.back-blur');
 const select = document.querySelector('.select');
 const selectItemActive = document.querySelector('.select__item_active');
 const selectContent = document.querySelector('.select__content');
+const mainContent = document.querySelector('.main_content');
+
+const BASE_URL = 'https://randomuser.me/api';
+const initialUsers = [];
+
+/*Init functions*/
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+}
+
+const getUsers = async (usersQty = 10) => {
+    const response = await fetch(BASE_URL + `/?results=${ usersQty }`);
+
+    handleErrors(response);
+
+    const { results: users } = await response.json();
+
+    return users;
+};
+
+const normalizeUserObject = (user) => {
+    const { gender, name, location, email, dob, phone, picture, nat, login } = user;
+
+    return ({
+        gender,
+        firstName: name.first,
+        lastName: name.last,
+        username: login.username,
+        age: dob.age,
+        email,
+        phone,
+        picture: picture.large,
+        city: location.city,
+        country: nat
+    });
+};
+
+const setUsers = (users) => {
+    const normalizedUsers = users.map((user) => normalizeUserObject(user));
+
+    initialUsers.push(...normalizedUsers);
+};
+
+const createFlagUrl = (country) => `https://flagcdn.com/40x30/${ country.toLowerCase() }.png`;
+
+const createUserBlock = (user) => {
+    const { gender, firstName, lastName, age, email, phone, picture, city, country, username } = user;
+
+    const genderIconUrl = gender === 'male'
+        ? './assets/icons/male-filter-icon.svg'
+        : './assets/icons/female-filter-icon.svg';
+
+    const countryFlagUrl = createFlagUrl(country);
+
+    const userBlock = document.createElement('div');
+
+    userBlock.className = 'user-info';
+
+    userBlock.innerHTML = `
+                          <div class="user-info__background-image"> 
+                          <div class="user-info__city">${ city }</div>
+                          </div>
+                          <div class="user-info__content">
+                            <div class="user-info__image">  
+                              <img src=${ picture } alt="profile photo">  
+                            </div>  
+                            <div class="user-info__gender"> 
+                              <div class="user-info__gender-icon">  
+                                <img src=${ genderIconUrl } alt="gender icon">
+                              </div>
+                            </div>  
+                            <div class="user-info__location">
+                              <img src=${ countryFlagUrl } alt="country">
+                            </div>
+                            <div class="user-info__name">${ firstName } ${ lastName }
+                            </div>
+                            <div class="user-info__nickname">@${ username }</div>
+                            <div class="user-info__contacts">
+                              <a href="tel:${ phone }" class="user-info__contact-link"></a>
+                              <a href="mailto:${ email }" class="user-info__contact-link"></a>
+                            </div>
+                          </div>`;
+
+    return userBlock;
+};
+
+const renderUsers = (users) => {
+    mainContent.innerHTML = '';
+
+    const usersToRender = users.map((user) => createUserBlock(user));
+    console.log(usersToRender);
+
+    mainContent.append(...usersToRender);
+};
+
+
+const init = async () => {
+    try {
+        const users = await getUsers();
+
+        setUsers(users);
+
+        renderUsers(initialUsers);
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+init();
 
 /*Slider settings*/
+
 const slider = document.getElementById('slider-round');
 
 
@@ -62,8 +175,6 @@ function selectOnClick({ target }) {
 }
 
 select.addEventListener('click', selectOnClick);
-
-const createFlagUrl = (country) => `https://flagcdn.com/${ country }.svg`;
 
 const user = {
     "gender": "male",
