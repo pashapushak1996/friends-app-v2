@@ -5,9 +5,15 @@ const select = document.querySelector('.select');
 const selectItemActive = document.querySelector('.select__item_active');
 const selectContent = document.querySelector('.select__content');
 const mainContent = document.querySelector('.main_content');
+const applyButton = document.querySelector('#apply-button');
+const headerSearch = document.querySelector('.header__search input');
 
 const BASE_URL = 'https://randomuser.me/api';
-const initialUsers = [];
+
+const appState = {
+    initialUsers: [],
+    searchValue: ''
+};
 
 /*Init functions*/
 function handleErrors(response) {
@@ -47,7 +53,7 @@ const normalizeUserObject = (user) => {
 const setUsers = (users) => {
     const normalizedUsers = users.map((user) => normalizeUserObject(user));
 
-    initialUsers.push(...normalizedUsers);
+    appState.initialUsers.push(...normalizedUsers);
 };
 
 const createFlagUrl = (country) => `https://flagcdn.com/40x30/${ country.toLowerCase() }.png`;
@@ -55,9 +61,7 @@ const createFlagUrl = (country) => `https://flagcdn.com/40x30/${ country.toLower
 const createUserBlock = (user) => {
     const { gender, firstName, lastName, age, email, phone, picture, city, country, username } = user;
 
-    const genderIconUrl = gender === 'male'
-        ? './assets/icons/male-filter-icon.svg'
-        : './assets/icons/female-filter-icon.svg';
+    const genderIconUrl = gender === 'male' ? './assets/icons/male-filter-icon.svg' : './assets/icons/female-filter-icon.svg';
 
     const countryFlagUrl = createFlagUrl(country);
 
@@ -66,8 +70,9 @@ const createUserBlock = (user) => {
     userBlock.className = 'user-info';
 
     userBlock.innerHTML = `
-                          <div class="user-info__background-image"> 
-                          <div class="user-info__city">${ city }</div>
+                          <div class="user-info__header"> 
+                            <div class="user-info__city">${ city }</div>
+                            <div class="user-info__age">${ age }</div>
                           </div>
                           <div class="user-info__content">
                             <div class="user-info__image">  
@@ -97,19 +102,115 @@ const renderUsers = (users) => {
     mainContent.innerHTML = '';
 
     const usersToRender = users.map((user) => createUserBlock(user));
-    console.log(usersToRender);
 
     mainContent.append(...usersToRender);
 };
 
+const filterByEmail = (searchValue) => (user) => {
+    return user.email.includes(searchValue);
+};
+
+const normalizeTextValue = (value) => value.trim().toLowerCase();
+
+const searchByEmail = (users) => {
+    const emailTextArea = document.getElementById('email');
+
+    const normalizedValue = normalizeTextValue(emailTextArea.value);
+
+    const usersToRender = users.filter(filterByEmail(normalizedValue));
+
+    return usersToRender;
+};
+
+const compareAge = (userOne, userTwo) => userOne.age - userTwo.age;
+
+const compareName = (userOne, userTwo) => {
+    const userOneFullName = (userOne.firstName + userOne.lastName).toLowerCase();
+    const userTwoFullName = (userTwo.firstName + userTwo.lastName).toLowerCase();
+
+    if (userOneFullName > userTwoFullName) {
+        return 1
+    }
+
+    return -1
+};
+
+const sortUsers = (users) => {
+    const checkedSortOption = document.querySelector('input[name=sort-option]:checked').value.split('-');
+
+    const sortBy = checkedSortOption[0].toLowerCase();
+    const orderBy = checkedSortOption[1];
+
+
+    switch (sortBy) {
+        case 'age': {
+            const sortedUsers = users.sort(compareAge);
+
+            return orderBy === 'asc'
+                ? sortedUsers
+                : sortedUsers.reverse();
+        }
+
+        case 'name': {
+            const sortedUsers = users.sort(compareName);
+
+            return orderBy === 'asc'
+                ? sortedUsers
+                : sortedUsers.reverse();
+        }
+
+        default: {
+            return users;
+        }
+    }
+};
+
+const filterByGender = (users) => {
+    const gender = document.querySelector('.radio-buttons input[name=gender]:checked').value;
+
+    return gender !== 'all' ? users.filter(user => user.gender === gender) : users;
+};
+
+const filterByAge = (users) => {
+    const [minAge, maxAge] = slider.noUiSlider.get();
+
+    return users.filter((user) => user.age >= minAge && user.age <= maxAge);
+};
+
+const setSearchInput = (value) => {
+    appState.searchValue = value
+};
+
+const searchByName = ({ target }) => {
+    const normalizedValue = normalizeTextValue(target.value);
+
+    setSearchInput(target.value);
+
+    const userInfoBlocks = document.querySelectorAll('.user-info');
+
+    userInfoBlocks.forEach((userBlock) => {
+        const userFullName = userBlock.querySelector('.user-info__name').innerText;
+
+        const isVisible = userFullName.toLowerCase().includes(normalizedValue);
+
+        userBlock.classList.toggle('none', !isVisible);
+    });
+};
+
+const drawerButtonOnClick = () => {
+    drawer.classList.toggle('active');
+    drawerButton.classList.toggle('active');
+    background.classList.toggle('active');
+    document.body.classList.toggle('lock');
+};
 
 const init = async () => {
     try {
-        const users = await getUsers();
+        const users = await getUsers(20);
 
         setUsers(users);
 
-        renderUsers(initialUsers);
+        renderUsers(appState.initialUsers);
     } catch (e) {
         console.log(e);
     }
@@ -121,13 +222,9 @@ init();
 
 const slider = document.getElementById('slider-round');
 
-
 noUiSlider.create(slider, {
-    start: ['0', '100'],
-    connect: true,
-    range: {
-        'min': 0,
-        'max': 100
+    start: ['0', '100'], connect: true, range: {
+        'min': 0, 'max': 100
     }
 });
 
@@ -137,7 +234,9 @@ function normalizeSliderValues(arrayOfValues) {
 
 slider.noUiSlider.on('update', function () {
     const [min, max] = slider.noUiSlider.get();
+
     const [minAge, maxAge] = normalizeSliderValues([min, max]);
+
     const sliderValueBlock = document.querySelector('.slider-value');
 
     sliderValueBlock.innerHTML = `<span>${ minAge }</span>
@@ -145,13 +244,22 @@ slider.noUiSlider.on('update', function () {
                                   <span>${ maxAge }</span>`;
 });
 
-drawerButton.addEventListener('click', () => {
-    drawer.classList.toggle('active');
-    drawerButton.classList.toggle('active');
-    background.classList.toggle('active');
-});
+const applyOnClick = () => {
+    const filteredUsersByAge = filterByAge(appState.initialUsers);
+    const filteredUsersByGender = filterByGender(filteredUsersByAge);
+    const filteredUsersByEmail = searchByEmail(filteredUsersByGender);
+    const sortedUsers = sortUsers(filteredUsersByEmail);
 
-function selectOnClick({ target }) {
+    renderUsers(sortedUsers);
+
+    searchByName({
+        target: {
+            value: appState.searchValue
+        }
+    });
+};
+
+const selectOnClick = ({ target }) => {
     selectContent.classList.toggle('select__content--visible');
 
     const sortOption = target.value;
@@ -161,65 +269,17 @@ function selectOnClick({ target }) {
     }
 
     const sortBy = target.value.split('-')[0];
-    const orderBy = target.value.split('-')[1];
-
-    const imageSrc = orderBy === 'asc'
-        ? '../assets/icons/sort-arrow-up.png'
-        : '../assets/icons/sort-arrow-down.png';
+    const selectItem = target.closest('.select__item');
+    const imageSrc = selectItem.querySelector('img').src;
 
     selectItemActive.innerHTML = `
                                   <span>${ sortBy }</span>
                                   <img src=${ imageSrc } alt="">
                                   `;
 
-}
-
-select.addEventListener('click', selectOnClick);
-
-const user = {
-    "gender": "male",
-    "name": {
-        "title": "Mr",
-        "first": "Justin",
-        "last": "Rodriguez"
-    },
-    "location": {
-        "street": {
-            "number": 7332,
-            "name": "Rue de la Barre"
-        },
-        "city": "Rouen",
-        "state": "Deux-Sèvres",
-        "country": "France",
-    },
-    "email": "justin.rodriguez@example.com",
-    "login": {
-        "uuid": "6e5bac39-083f-422a-924b-672b92406d14",
-        "username": "goldenpeacock467",
-        "password": "bobo",
-        "salt": "cFm7hjQK",
-        "md5": "48827fae59f8c40c680598441ec00efe",
-        "sha1": "f26f9b9e0b71db25bca93553fa36eafd05f93066",
-        "sha256": "957c414367e42fd4bbb9ac4bc4dbbcc9121d27630154ea58bc2012ae6d450116"
-    },
-    "dob": {
-        "date": "1972-11-22T17:00:36.053Z",
-        "age": 49
-    },
-    "registered": {
-        "date": "2004-11-25T14:22:42.336Z",
-        "age": 17
-    },
-    "phone": "03-12-04-80-23",
-    "cell": "06-01-45-29-35",
-    "id": {
-        "name": "INSEE",
-        "value": "1721076478607 50"
-    },
-    "picture": {
-        "large": "https://randomuser.me/api/portraits/men/71.jpg",
-        "medium": "https://randomuser.me/api/portraits/med/men/71.jpg",
-        "thumbnail": "https://randomuser.me/api/portraits/thumb/men/71.jpg"
-    },
-    "nat": "FR"
 };
+
+drawerButton.addEventListener('click', drawerButtonOnClick);
+select.addEventListener('click', selectOnClick);
+headerSearch.addEventListener('input', searchByName);
+applyButton.addEventListener('click', applyOnClick);

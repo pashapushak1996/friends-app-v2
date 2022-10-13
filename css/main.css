@@ -15,7 +15,7 @@ body {
   height: 100%;
 }
 
-.d-flex, .user-info__contact-link, .user-info__gender-icon, .user-info__location, .user-info__content, .radio-buttons__item, .radio-buttons, .slider-range, .button, .form__buttons, .form__item-header, .drawer__button, .drawer__form, .header .container, .header {
+.d-flex, .user-info__contact-link, .user-info__gender-icon, .user-info__location, .user-info__content, .user-info__age, .radio-buttons__item, .radio-buttons, .slider-range, .button, .form__buttons, .form__item-header, .drawer__button, .drawer__form, .header .container, .header {
   display: flex;
   align-items: center;
 }
@@ -81,7 +81,8 @@ body {
 .main {
   position: relative;
   display: flex;
-  flex: 1 auto;
+  overflow: hidden;
+  min-height: calc(100vh - 7.2rem);
 }
 
 .drawer {
@@ -265,13 +266,17 @@ body {
   left: 0;
   z-index: 1;
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 7.2rem);
   opacity: 1;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(2.5px);
 }
 .back-blur.active {
   display: block;
+}
+
+.lock {
+  overflow: hidden;
 }
 
 /*Slider styles*/
@@ -378,11 +383,44 @@ img {
   max-width: 100%;
 }
 
+.none {
+  display: none;
+}
+
 .user-info {
   height: 25.9rem;
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 3px 4px 15px rgba(0, 0, 0, 0.15);
+}
+.user-info__header {
+  position: relative;
+  width: 100%;
+  height: 12rem;
+  background-image: url("https://images.unsplash.com/photo-1519501025264-65ba15a82390?ixlib=rb-1.2.1&w=1080&fit=max&q=80&fm=jpg&crop=entropy&cs=tinysrgb");
+  background-repeat: no-repeat;
+  background-position: top;
+  background-size: cover;
+}
+.user-info__city, .user-info__age {
+  position: absolute;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+.user-info__city {
+  top: 2rem;
+  left: 2rem;
+}
+.user-info__age {
+  justify-content: center;
+  top: 1.5rem;
+  right: 2rem;
+  width: 3rem;
+  height: 3rem;
+  background-color: #1AE4A6;
+  border-radius: 50%;
+  font-size: 1.8rem;
 }
 .user-info__content {
   flex-direction: column;
@@ -442,23 +480,6 @@ img {
   width: 2rem;
   height: 2rem;
 }
-.user-info__background-image {
-  position: relative;
-  width: 100%;
-  height: 12rem;
-  background-image: url("https://images.unsplash.com/photo-1519501025264-65ba15a82390?ixlib=rb-1.2.1&w=1080&fit=max&q=80&fm=jpg&crop=entropy&cs=tinysrgb");
-  background-repeat: no-repeat;
-  background-position: top;
-  background-size: cover;
-}
-.user-info__city {
-  position: absolute;
-  top: 2rem;
-  left: 2rem;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #FFFFFF;
-}
 .user-info__name {
   font-size: 1.8rem;
   font-weight: 700;
@@ -468,10 +489,6 @@ img {
   color: #B0B0B0;
   font-size: 1.4rem;
   margin-bottom: 1rem;
-}
-.user-info__age {
-  font-size: 1.4rem;
-  margin-bottom: 2rem;
 }
 .user-info__contacts {
   margin-top: 1.3rem;
@@ -501,16 +518,17 @@ img {
   height: 3rem;
 }
 .user-info__contact-link:nth-child(1):after {
-  background-image: url("../assets/tel-icon.png");
+  background-image: url("../assets/icons/tel-icon.png");
 }
 .user-info__contact-link:nth-child(2):after {
-  background-image: url("../assets/mail-icon.png");
+  background-image: url("../assets/icons/mail-icon.png");
 }
 
 .main_content {
   position: relative;
   width: 100%;
   padding: 2rem;
+  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(max(25rem, calc(100% - 6rem)/4), 1fr));
   grid-gap: 2rem;
