@@ -86,6 +86,7 @@ body {
 .main {
   position: relative;
   display: flex;
+  align-items: flex-start;
   overflow: hidden;
   min-height: calc(100vh - 7.2rem);
 }
@@ -229,6 +230,7 @@ body {
   font-size: 1.4rem;
   font-weight: 700;
   color: $grey-color;
+  background-color: transparent;
   border: 1px solid $grey-color;
 
   &--green {
@@ -464,6 +466,7 @@ img {
   &__city {
     top: 2rem;
     left: 2rem;
+    max-width: 10rem;
   }
 
   &__age {
@@ -605,6 +608,7 @@ img {
 .main_content {
   position: relative;
   width: 100%;
+  max-height: 100%;
   padding: 2rem;
   overflow-y: auto;
   $grid-layout-gap: 2rem;

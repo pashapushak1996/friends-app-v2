@@ -31,7 +31,7 @@
   <div class="main">
     <div class="drawer">
       <div class="drawer__inner">
-        <form class="drawer__form form">
+        <form class="drawer__form form" id="filter-form" name="filter-form">
           <h2 class="form__title">Filters</h2>
           <div class="form__item">
             <h2 class="form__subtitle">Email address</h2>
@@ -56,7 +56,7 @@
             <h2 class="form__subtitle">Gender</h2>
             <div class="radio-buttons">
               <div class="radio-buttons__item">
-                <input class="radio-buttons__radio-btn" type="radio" name="gender" value="all" checked>
+                <input id="all" class="radio-buttons__radio-btn" type="radio" name="gender" value="all" checked>
                 <span>Both</span>
               </div>
               <div class="radio-buttons__item">
@@ -75,8 +75,8 @@
             <h2 class="form__subtitle">Sort by</h2>
             <div class="select">
               <div class="select__item select__item_active">
-                <span>Random</span>
-                <img src="assets/icons/sort-arrow-random.png" alt="">
+                <span>Default</span>
+                <img src="assets/icons/sort-arrow-default.png" alt="">
               </div>
               <div class="select__content">
                 <div class="select__item">
@@ -100,16 +100,16 @@
                   <img src="assets/icons/sort-arrow-down.png" alt="">
                 </div>
                 <div class="select__item">
-                  <input class="select__radio" type="radio" name="sort-option" value="Random" checked>
-                  <span>Random</span>
-                  <img src="assets/icons/sort-arrow-random.png" alt="">
+                  <input id="default" class="select__radio" type="radio" name="sort-option" value="Random" checked>
+                  <span>Default</span>
+                  <img src="assets/icons/sort-arrow-default.png" alt="">
                 </div>
               </div>
             </div>
           </div>
           <div class="form__buttons">
-            <div class="button">Cancel</div>
-            <div id="apply-button" class="button button--green">Apply</div>
+            <button id="reset-button" class="button">Reset</button>
+            <button id="apply-button" class="button button--green">Apply</button>
           </div>
         </form>
         <div class="drawer__button">
@@ -118,35 +118,7 @@
         </div>
       </div>
     </div>
-    <div class="main_content container">
-      <div class="user-info">
-        <div class="user-info__header">
-          <div class="user-info__city"></div>
-          <div class="user-info__age"></div>
-        </div>
-        <div class="user-info__content">
-          <div class="user-info__image">
-            <img
-                src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHw%3D&w=1000&q=80"
-                alt="user-photo">
-          </div>
-          <div class="user-info__gender">
-            <div class="user-info__gender-icon">
-              <img src="./assets/icons/male-filter-icon.svg" alt="gender">
-            </div>
-          </div>
-          <div class="user-info__location">
-            <img src="https://flagcdn.com/fr.svg" alt="nat">
-            <span>Berkley</span>
-          </div>
-          <div class="user-info__name">John Doe</div>
-          <div class="user-info__nickname">@happycat457</div>
-          <div class="user-info__contacts">
-            <a href="tel:+496170961709" class="user-info__contact-link"></a>
-            <a href="mailto:justin.rodriguez@example.com" class="user-info__contact-link"></a>
-          </div>
-        </div>
-      </div>
+    <div class="main_content">
     </div>
     <div class="back-blur"></div>
   </div>

@@ -7,6 +7,8 @@ const selectContent = document.querySelector('.select__content');
 const mainContent = document.querySelector('.main_content');
 const applyButton = document.querySelector('#apply-button');
 const headerSearch = document.querySelector('.header__search input');
+const resetButton = document.querySelector('#reset-button');
+const filterForm = document.forms['filter-form'];
 
 const BASE_URL = 'https://randomuser.me/api';
 
@@ -113,9 +115,9 @@ const filterByEmail = (searchValue) => (user) => {
 const normalizeTextValue = (value) => value.trim().toLowerCase();
 
 const searchByEmail = (users) => {
-    const emailTextArea = document.getElementById('email');
+    const emailTextAreaValue = getFormData('email');
 
-    const normalizedValue = normalizeTextValue(emailTextArea.value);
+    const normalizedValue = normalizeTextValue(emailTextAreaValue);
 
     const usersToRender = users.filter(filterByEmail(normalizedValue));
 
@@ -136,7 +138,7 @@ const compareName = (userOne, userTwo) => {
 };
 
 const sortUsers = (users) => {
-    const checkedSortOption = document.querySelector('input[name=sort-option]:checked').value.split('-');
+    const checkedSortOption = getFormData('sort-option').split('-');
 
     const sortBy = checkedSortOption[0].toLowerCase();
     const orderBy = checkedSortOption[1];
@@ -166,9 +168,11 @@ const sortUsers = (users) => {
 };
 
 const filterByGender = (users) => {
-    const gender = document.querySelector('.radio-buttons input[name=gender]:checked').value;
+    const gender = getFormData('gender');
 
-    return gender !== 'all' ? users.filter(user => user.gender === gender) : users;
+    return gender !== 'all'
+        ? users.filter(user => user.gender === gender)
+        : users;
 };
 
 const filterByAge = (users) => {
@@ -197,12 +201,12 @@ const searchByName = ({ target }) => {
     });
 };
 
-const drawerButtonOnClick = () => {
+const toggleDrawer = () => {
     drawer.classList.toggle('active');
     drawerButton.classList.toggle('active');
     background.classList.toggle('active');
     document.body.classList.toggle('lock');
-};
+}
 
 const init = async () => {
     try {
@@ -232,7 +236,7 @@ function normalizeSliderValues(arrayOfValues) {
     return arrayOfValues.map((value) => Number(value).toFixed(0));
 }
 
-slider.noUiSlider.on('update', function () {
+const onSliderUpdate = () => {
     const [min, max] = slider.noUiSlider.get();
 
     const [minAge, maxAge] = normalizeSliderValues([min, max]);
@@ -242,12 +246,23 @@ slider.noUiSlider.on('update', function () {
     sliderValueBlock.innerHTML = `<span>${ minAge }</span>
                                   <span>-</span>
                                   <span>${ maxAge }</span>`;
-});
+};
 
-const applyOnClick = () => {
+slider.noUiSlider.on('update', onSliderUpdate);
+
+const getFormData = (formElement) => {
+    return filterForm[formElement].value;
+};
+
+const applyOnClick = (e) => {
+    e.preventDefault();
+
     const filteredUsersByAge = filterByAge(appState.initialUsers);
+
     const filteredUsersByGender = filterByGender(filteredUsersByAge);
+
     const filteredUsersByEmail = searchByEmail(filteredUsersByGender);
+
     const sortedUsers = sortUsers(filteredUsersByEmail);
 
     renderUsers(sortedUsers);
@@ -257,6 +272,8 @@ const applyOnClick = () => {
             value: appState.searchValue
         }
     });
+
+    toggleDrawer();
 };
 
 const selectOnClick = ({ target }) => {
@@ -279,7 +296,27 @@ const selectOnClick = ({ target }) => {
 
 };
 
-drawerButton.addEventListener('click', drawerButtonOnClick);
+const resetOnClick = (e) => {
+    e.preventDefault();
+    const emailTextArea = document.querySelector('#email');
+
+    emailTextArea.value = '';
+    filterForm['all'].checked = true;
+    filterForm['default'].checked = true;
+    slider.noUiSlider.set([0, 100]);
+
+    selectItemActive.innerHTML = `
+                                  <span>Default</span>
+                                  <img src="../assets/icons/sort-arrow-default.png" alt="">
+                                  `;
+
+    toggleDrawer();
+
+    renderUsers(appState.initialUsers);
+};
+
+drawerButton.addEventListener('click', toggleDrawer);
+resetButton.addEventListener('click', resetOnClick);
 select.addEventListener('click', selectOnClick);
 headerSearch.addEventListener('input', searchByName);
 applyButton.addEventListener('click', applyOnClick);
