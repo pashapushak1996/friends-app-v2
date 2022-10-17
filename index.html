@@ -23,7 +23,7 @@
         <span>Friends-app</span>
       </div>
       <div class="header__search">
-        <input type="text" placeholder="Search...">
+        <input type="text" placeholder="Search..." name="headerSearch">
         <img src="/assets/icons/search-icon.svg" alt="search icon">
       </div>
     </div>
@@ -80,27 +80,27 @@
               </div>
               <div class="select__content">
                 <div class="select__item">
-                  <input class="select__radio" type="radio" name="sort-option" value="Name-asc">
+                  <input class="select__radio" type="radio" name="sortOption" value="Name-asc">
                   <span>Name</span>
                   <img src="assets/icons/sort-arrow-up.png" alt="">
                 </div>
                 <div class="select__item">
-                  <input class="select__radio" type="radio" name="sort-option" value="Name-desc">
+                  <input class="select__radio" type="radio" name="sortOption" value="Name-desc">
                   <span>Name</span>
                   <img src="assets/icons/sort-arrow-down.png" alt="">
                 </div>
                 <div class="select__item">
-                  <input class="select__radio" type="radio" name="sort-option" value="Age-asc">
+                  <input class="select__radio" type="radio" name="sortOption" value="Age-asc">
                   <span>Age</span>
                   <img src="assets/icons/sort-arrow-up.png" alt="">
                 </div>
                 <div class="select__item">
-                  <input class="select__radio" type="radio" name="sort-option" value="Age-desc">
+                  <input class="select__radio" type="radio" name="sortOption" value="Age-desc">
                   <span>Age</span>
                   <img src="assets/icons/sort-arrow-down.png" alt="">
                 </div>
                 <div class="select__item">
-                  <input id="default" class="select__radio" type="radio" name="sort-option" value="Random" checked>
+                  <input id="default" class="select__radio" type="radio" name="sortOption" value="default" checked>
                   <span>Default</span>
                   <img src="assets/icons/sort-arrow-default.png" alt="">
                 </div>
@@ -119,6 +119,8 @@
       </div>
     </div>
     <div class="main_content">
+      <div class="users-container"></div>
+      <button class="button" id="load-more">Load more...</button>
     </div>
     <div class="back-blur"></div>
   </div>

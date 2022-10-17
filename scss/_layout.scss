@@ -606,6 +606,14 @@ img {
 }
 
 .main_content {
+  @extend .d-flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  max-height: 100%;
+}
+
+.users-container {
   position: relative;
   width: 100%;
   max-height: 100%;
@@ -628,3 +636,21 @@ img {
   }
 }
 
+#load-more {
+  opacity: 0;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  position: relative;
+
+  left: -100%;
+  transition: opacity 200ms ease-out;
+}
+
+#load-more.active {
+  position: relative;
+  left: 0;
+  opacity: 1;
+}

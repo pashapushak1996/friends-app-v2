@@ -4,7 +4,7 @@ const background = document.querySelector('.back-blur');
 const select = document.querySelector('.select');
 const selectItemActive = document.querySelector('.select__item_active');
 const selectContent = document.querySelector('.select__content');
-const mainContent = document.querySelector('.main_content');
+const usersContainer = document.querySelector('.users-container');
 const applyButton = document.querySelector('#apply-button');
 const headerSearch = document.querySelector('.header__search input');
 const resetButton = document.querySelector('#reset-button');
@@ -14,7 +14,22 @@ const BASE_URL = 'https://randomuser.me/api';
 
 const appState = {
     initialUsers: [],
-    searchValue: ''
+    searchValue: '',
+    userCardIncrease: 12,
+    currentPage: 1
+};
+
+const filtersState = {
+    gender: 'all',
+    sortOption: 'default',
+    age: {
+        min: 0,
+        max: 100
+    }
+};
+
+const setFilters = (filter, value) => {
+    filtersState[filter] = value;
 };
 
 /*Init functions*/
@@ -25,8 +40,8 @@ function handleErrors(response) {
     return response;
 }
 
-const getUsers = async (usersQty = 10) => {
-    const response = await fetch(BASE_URL + `/?results=${ usersQty }`);
+const getUsers = async (usersQty = 10, pageIndex) => {
+    const response = await fetch(BASE_URL + `/?page=${ pageIndex }&results=${ usersQty }`);
 
     handleErrors(response);
 
@@ -63,7 +78,9 @@ const createFlagUrl = (country) => `https://flagcdn.com/40x30/${ country.toLower
 const createUserBlock = (user) => {
     const { gender, firstName, lastName, age, email, phone, picture, city, country, username } = user;
 
-    const genderIconUrl = gender === 'male' ? './assets/icons/male-filter-icon.svg' : './assets/icons/female-filter-icon.svg';
+    const genderIconUrl = gender === 'male'
+        ? './assets/icons/male-filter-icon.svg'
+        : './assets/icons/female-filter-icon.svg';
 
     const countryFlagUrl = createFlagUrl(country);
 
@@ -101,11 +118,11 @@ const createUserBlock = (user) => {
 };
 
 const renderUsers = (users) => {
-    mainContent.innerHTML = '';
+    usersContainer.innerHTML = '';
 
     const usersToRender = users.map((user) => createUserBlock(user));
 
-    mainContent.append(...usersToRender);
+    usersContainer.append(...usersToRender);
 };
 
 const filterByEmail = (searchValue) => (user) => {
@@ -138,7 +155,7 @@ const compareName = (userOne, userTwo) => {
 };
 
 const sortUsers = (users) => {
-    const checkedSortOption = getFormData('sort-option').split('-');
+    const checkedSortOption = filtersState.sortOption.split('-');
 
     const sortBy = checkedSortOption[0].toLowerCase();
     const orderBy = checkedSortOption[1];
@@ -167,11 +184,15 @@ const sortUsers = (users) => {
     }
 };
 
-const filterByGender = (users) => {
-    const gender = getFormData('gender');
+const onFormChange = ({ target }) => {
+    setFilters(target.name, target.value);
+};
 
-    return gender !== 'all'
-        ? users.filter(user => user.gender === gender)
+filterForm.addEventListener('change', onFormChange)
+
+const filterByGender = (users) => {
+    return filtersState.gender !== 'all'
+        ? users.filter(user => user.gender === filtersState.gender)
         : users;
 };
 
@@ -208,9 +229,11 @@ const toggleDrawer = () => {
     document.body.classList.toggle('lock');
 }
 
-const init = async () => {
+const showUsers = async (pageIndex) => {
     try {
-        const users = await getUsers(20);
+        appState.currentPage = pageIndex;
+
+        const users = await getUsers(appState.userCardIncrease, pageIndex);
 
         setUsers(users);
 
@@ -218,9 +241,17 @@ const init = async () => {
     } catch (e) {
         console.log(e);
     }
-};
+}
 
-init();
+const loadMoreBtn = document.querySelector('#load-more');
+
+const loadMoreOnClick = async () => {
+    await showUsers(appState.currentPage++);
+
+    const processedUsers = processUsers(appState.initialUsers);
+
+    renderUsers(processedUsers);
+};
 
 /*Slider settings*/
 
@@ -254,10 +285,8 @@ const getFormData = (formElement) => {
     return filterForm[formElement].value;
 };
 
-const applyOnClick = (e) => {
-    e.preventDefault();
-
-    const filteredUsersByAge = filterByAge(appState.initialUsers);
+const processUsers = (users) => {
+    const filteredUsersByAge = filterByAge(users);
 
     const filteredUsersByGender = filterByGender(filteredUsersByAge);
 
@@ -265,7 +294,15 @@ const applyOnClick = (e) => {
 
     const sortedUsers = sortUsers(filteredUsersByEmail);
 
-    renderUsers(sortedUsers);
+    return sortedUsers;
+};
+
+const applyOnClick = (e) => {
+    e.preventDefault();
+
+    const processedUsers = processUsers(appState.initialUsers);
+
+    renderUsers(processedUsers);
 
     searchByName({
         target: {
@@ -320,3 +357,18 @@ resetButton.addEventListener('click', resetOnClick);
 select.addEventListener('click', selectOnClick);
 headerSearch.addEventListener('input', searchByName);
 applyButton.addEventListener('click', applyOnClick);
+loadMoreBtn.addEventListener('click', loadMoreOnClick);
+
+window.addEventListener('load', showUsers);
+
+const userContainerOnScroll = ({ target }) => {
+    if (target.scrollHeight - target.scrollTop === target.clientHeight) {
+        loadMoreBtn.classList.add('active');
+    } else {
+        loadMoreBtn.classList.remove('active');
+    }
+};
+
+usersContainer.addEventListener('scroll', userContainerOnScroll);
+
+
