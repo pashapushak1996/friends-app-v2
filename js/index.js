@@ -9,6 +9,7 @@ const applyButton = document.querySelector('#apply-button');
 const headerSearch = document.querySelector('.header__search input');
 const resetButton = document.querySelector('#reset-button');
 const filterForm = document.forms['filter-form'];
+const slider = document.getElementById('slider-round');
 
 const BASE_URL = 'https://randomuser.me/api';
 
@@ -22,10 +23,8 @@ const appState = {
 const filtersState = {
     gender: 'all',
     sortOption: 'default',
-    age: {
-        min: 0,
-        max: 100
-    }
+    minAge: 0,
+    maxAge: 100
 };
 
 const setFilters = (filter, value) => {
@@ -197,7 +196,9 @@ const filterByGender = (users) => {
 };
 
 const filterByAge = (users) => {
-    const [minAge, maxAge] = slider.noUiSlider.get();
+    const { minAge, maxAge } = filtersState;
+    console.log(minAge);
+    console.log(maxAge);
 
     return users.filter((user) => user.age >= minAge && user.age <= maxAge);
 };
@@ -246,16 +247,16 @@ const showUsers = async (pageIndex) => {
 const loadMoreBtn = document.querySelector('#load-more');
 
 const loadMoreOnClick = async () => {
-    await showUsers(appState.currentPage++);
+    await showUsers(appState.currentPage++)
 
     const processedUsers = processUsers(appState.initialUsers);
 
     renderUsers(processedUsers);
+
+    usersContainer.scrollTop = usersContainer.scrollHeight;
 };
 
 /*Slider settings*/
-
-const slider = document.getElementById('slider-round');
 
 noUiSlider.create(slider, {
     start: ['0', '100'], connect: true, range: {
@@ -271,6 +272,9 @@ const onSliderUpdate = () => {
     const [min, max] = slider.noUiSlider.get();
 
     const [minAge, maxAge] = normalizeSliderValues([min, max]);
+
+    setFilters(['minAge'], minAge);
+    setFilters(['maxAge'], maxAge);
 
     const sliderValueBlock = document.querySelector('.slider-value');
 

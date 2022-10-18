@@ -619,6 +619,7 @@ img {
   max-height: 100%;
   padding: 2rem;
   overflow-y: auto;
+  scroll-behavior: smooth;
   $grid-layout-gap: 2rem;
   $grid-column-count: 4;
   $grid-item--min-width: 25rem;

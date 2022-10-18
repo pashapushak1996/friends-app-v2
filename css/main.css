@@ -538,6 +538,7 @@ img {
   max-height: 100%;
   padding: 2rem;
   overflow-y: auto;
+  scroll-behavior: smooth;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(max(25rem, calc(100% - 6rem)/4), 1fr));
   grid-gap: 2rem;
