@@ -356,14 +356,20 @@ const resetOnClick = (e) => {
     renderUsers(appState.initialUsers);
 };
 
-drawerButton.addEventListener('click', toggleDrawer);
-resetButton.addEventListener('click', resetOnClick);
-select.addEventListener('click', selectOnClick);
-headerSearch.addEventListener('input', searchByName);
-applyButton.addEventListener('click', applyOnClick);
-loadMoreBtn.addEventListener('click', loadMoreOnClick);
+function init() {
+    drawerButton.addEventListener('click', toggleDrawer);
+    resetButton.addEventListener('click', resetOnClick);
+    select.addEventListener('click', selectOnClick);
+    headerSearch.addEventListener('input', searchByName);
+    applyButton.addEventListener('click', applyOnClick);
+    loadMoreBtn.addEventListener('click', loadMoreOnClick);
 
-window.addEventListener('load', showUsers);
+    usersContainer.addEventListener('scroll', userContainerOnScroll);
+
+    showUsers();
+}
+
+window.addEventListener('load', init);
 
 const userContainerOnScroll = ({ target }) => {
     if (target.scrollHeight - target.scrollTop === target.clientHeight) {
@@ -372,7 +378,5 @@ const userContainerOnScroll = ({ target }) => {
         loadMoreBtn.classList.remove('active');
     }
 };
-
-usersContainer.addEventListener('scroll', userContainerOnScroll);
 
 
